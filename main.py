@@ -39,9 +39,10 @@ class Map(object):
         
 
 class Zone(object):
-    def __init__(self,name,id):
+    def __init__(self,name,id,lifts=[]):
         self.levels = []
         self.name = name
+        self.lifts = []
         self.id = id
 
     def get_name(self):
@@ -51,6 +52,19 @@ class Zone(object):
         self.name = new
         return self.get_name()
 
+    def get_lifts(self):
+        return self.lifts
+
+    def set_lifts(self,new):
+        self.lifts = new
+        return self.get_lifts()
+
+    def add_lift(self,new):
+        curr = self.get_lifts()
+        curr.append(new)
+        self.lifts = curr
+        return self.get_lifts()
+    
     def get_id(self):
         return self.id
     
@@ -78,9 +92,9 @@ class Zone(object):
         return str(self.get_name())
 
 class Level(object):
-    def __init__(self,name,number):
-        self.connectors = []
-        self.nodes = []
+    def __init__(self,name,number,nodes=[],edges=[]):
+        self.edges = edges
+        self.nodes = nodes
         self.name = name
         self.number = number
 
@@ -111,6 +125,19 @@ class Level(object):
         self.set_nodes(curr)
         return self.get_nodes()
 
+    def get_edges(self):
+        return self.edges
+
+    def set_edges(self,new):
+        self.edges = new
+        return self.get_edges()
+
+    def add_edge(self,new):
+        curr = self.get_edges()
+        curr.append(new)
+        self.edges = curr
+        return self.get_edges()
+
     def __repr__(self):
         return str(self.get_name())
 
@@ -118,12 +145,10 @@ class Level(object):
         return str(self.get_name())
 
 class Node(object):
-    def __init__(self,name,area,level,x,y):
+    def __init__(self,name,area,level):
         self.name = name
         self.area = area
         self.level = level
-        self.x = x
-        self.y = y
         level.add_node(self)
 
     def get_type(self):
@@ -131,21 +156,21 @@ class Node(object):
 
     def set_type(self, new):
         self.type = new
-        return get_type(self)
+        return self.get_type()
 
-    def get_x(self):
-        return self.x
-
-    def set_x(self,new):
-        self.x = new
-        return self.get_x()
-
-    def get_y(self):
-        return self.y
-
-    def set_y(self,new):
-        self.y = new
-        return self.get_y()
+##    def get_x(self):
+##        return self.x
+##
+##    def set_x(self,new):
+##        self.x = new
+##        return self.get_x()
+##
+##    def get_y(self):
+##        return self.y
+##
+##    def set_y(self,new):
+##        self.y = new
+##        return self.get_y()
     
     def get_name(self):
         return self.name
@@ -161,8 +186,8 @@ class Node(object):
         return str(self.get_name())
     
 class Classroom(Node):
-    def __init__(self,name,area,level,x,y,civics_class):
-        super().__init__(name,area,level,x,y)
+    def __init__(self,name,area,level,civics_class):
+        super().__init__(name,area,level)
         self.civics_class = civics_class
 
     def get_civics(self):
@@ -178,50 +203,60 @@ class Classroom(Node):
     def __str__(self):
         return str(self.get_name())
 
-class Stairs(Edge):
-    def __init__(self, a, b, steps):
-        super().__init__(a,b)
-        self.steps = steps
-        #a and b are levels that the stairs connect
-
-    def get_a(self):
-        return self.a
-
-    def set_a(self,new):
-        self.x = new
-        return self.get_a()
-
-    def get_b(self):
-        return self.x
-
-    def set_b(self,new):
-        self.x = new
-        return self.get_x()
-
-
 class Edge(object):
-    def __init__(self, a, b):
+    def __init__(self, a, b, name):
         self.a = a
         self.b = b
-        #a and b are nodes that the edge connect
+        self.name = name
+        #a and b are nodes that the edge connects
 
     def get_a(self):
         return self.a
 
     def set_a(self,new):
-        self.x = new
+        self.a = new
         return self.get_a()
 
     def get_b(self):
-        return self.x
+        return self.b
 
     def set_b(self,new):
-        self.x = new
-        return self.get_x()
-        
-class Lift(object):
-    def __init__(self, levels):
+        self.b = new
+        return self.get_b()
+
+class Stairs(Edge):
+    def __init__(self, a, b, name, steps=10):
+        super().__init__(a,b,name)
+        self.steps = steps
+
+
+class Lift():
+    def __init__(self, name, levels=[]):
         self.levels = levels
+        self.name = name
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self,new):
+        self.name = new
+        return self.get_name()
+
+    def get_levels(self):
+        return self.levels
+
+    def set_levels(self,new):
+        self.levels = new
+        return self.get_levels()
+
+    def add_level(self,new):
+        curr = self.get_levels()
+        curr.append(new)
+        self.set_levels(curr)
+        return self.get_levels()
+
+    def __repr__(self):
+        return str(self.get_name())
         
 
 m = Map('RI')
@@ -235,12 +270,16 @@ rl4 = Level('rl4',4)
 rl5 = Level('rl5',5)
 rl6 = Level('rl6',6)
 rl7 = Level('rl7',7)
+rs12 = Stairs(rl1,rl2,20)
+rajalift = Lift('Raja Block Lift')
 raja_levels = [rl1,rl2,rl3,rl4,rl5,rl6,rl7]
 for r in raja_levels:
-    a.add_level(r)
+    rajalift.add_level(r)
+a.add_lift(rajalift)
 
-g0201 = Node('g0201',a,rl2,0,0)
-g0202 = Classroom('g0202',a,rl2,1,0,'s06g')
+rlift2 = Node('Raja L2 Lift Landing',a, rl2)
+g0201 = Classroom('g0201',a,rl2,'s06f')
+g0202 = Classroom('g0202',a,rl2,'s06g')
 
 m.add_zone(a)
 m.add_zone(b)
