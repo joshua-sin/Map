@@ -178,10 +178,10 @@ class Classroom(Node):
     def __str__(self):
         return str(self.get_name())
 
-class Stairs(Node):
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
+class Stairs(Edge):
+    def __init__(self, a, b, steps):
+        super().__init__(a,b)
+        self.steps = steps
         #a and b are levels that the stairs connect
 
     def get_a(self):
@@ -198,7 +198,28 @@ class Stairs(Node):
         self.x = new
         return self.get_x()
 
-class Lift(Node):
+
+class Edge(object):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+        #a and b are nodes that the edge connect
+
+    def get_a(self):
+        return self.a
+
+    def set_a(self,new):
+        self.x = new
+        return self.get_a()
+
+    def get_b(self):
+        return self.x
+
+    def set_b(self,new):
+        self.x = new
+        return self.get_x()
+        
+class Lift(object):
     def __init__(self, levels):
         self.levels = levels
         
